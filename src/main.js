@@ -9,7 +9,7 @@ $(document).ready(function () {
     $('#location').val("");
 
     let request = new XMLHttpRequest();
-    const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=[YOUR-API-KEY-HERE]`;
+    const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.API_KEY}`
 
     request.onreadystatechange = function () {
       if (this.readyState === 4 && this.status === 200) {
@@ -21,9 +21,14 @@ $(document).ready(function () {
     request.open("GET", url, true);
     request.send();
 
+    function convertFromKelvinToFahrenheit(response) {
+      return (((response - 273.15) * 9) / 5) + 32;
+    }
+
+    //(K - 273.15) * 9 / 5 + 32
     function getElements(response) {
       $('.showHumidity').text(`The humidity in ${city} is ${response.main.humidity}%`);
-      $('.showTemp').text(`The temperature in Kelvins is ${response.main.temp} degrees.`);
+      $('.showTemp').text(`The temperature in Fahrenheit is ${convertFromKelvinToFahrenheit(response.main.temp)} degrees.`);
     }
   });
 });
